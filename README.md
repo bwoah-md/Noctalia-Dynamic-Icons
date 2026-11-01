@@ -9,7 +9,7 @@ Dynamic icons for GTK file managers (Nemo, Thunar, Nautilus, Caja). These script
 ### Papirus
 ![Papirus Preview](img/papirus.png)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/main/papirus.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/papirus.sh | bash
 ```
 
 ---
@@ -17,7 +17,7 @@ curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/m
 ### Colloid 
 ![Colloid Preview](img/colloid.png)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/main/colloid.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/colloid.sh | bash
 ```
 
 ---
@@ -25,7 +25,7 @@ curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/m
 ### Flat-Remix
 ![Flat-Remix Preview](img/flat.png)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/main/flat-remix.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bwaoh-md/noctalia-dynamic-icons/main/flat-remix.sh | bash
 ```
 
 ---
@@ -33,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/m
 ### Tela
 ![Tela Preview](img/tela.png)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/main/tela.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/tela.sh | bash
 ```
 
 ---
@@ -43,7 +43,7 @@ curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/m
 *Currently under maintenance. Use with caution.*
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/main/reversal.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/reversal.sh | bash
 ```
 
 ---
@@ -51,5 +51,5 @@ curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/m
 ### Zafiro
 ![Zafiro Preview](img/zafiro.png)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ezequielgk/noctalia-dynamic-icons/main/zafiro.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/zafiro.sh | bash
 ```

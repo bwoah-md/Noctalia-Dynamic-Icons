@@ -25,7 +25,7 @@ curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/mai
 ### Flat-Remix
 ![Flat-Remix Preview](img/flat.png)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/bwaoh-md/noctalia-dynamic-icons/main/flat-remix.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/flat-remix.sh | bash
 ```
 
 ---

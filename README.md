@@ -28,23 +28,26 @@ Copy and run this helper once:
 run_noctalia_icon_installer() {
     local script="$1"
     local schema_pkg
-    local schema_file
-    local schema_dir
+
+    if [[ -z "$script" ]]; then
+        echo "[error] Specify an installer."
+        return 1
+    fi
+
+    # Allow only known installers
+    case "$script" in
+        papirus.sh|colloid.sh|flat-remix.sh|tela.sh|reversal.sh|zafiro.sh)
+            ;;
+        *)
+            echo "[error] Unknown installer: $script"
+            return 1
+            ;;
+    esac
 
     # Locate GNOME schemas in the Nix store
     schema_pkg="$(nix eval --raw nixpkgs#gsettings-desktop-schemas.outPath)" ||
         return 1
 
-    schema_file="$(find "$schema_pkg" -name gschemas.compiled -print -quit)"
-
-    if [[ -z "$schema_file" ]]; then
-        echo "[error] Could not locate compiled GNOME schemas."
-        return 1
-    fi
-
-    schema_dir="${schema_file%/*}"
-
-    echo "[info] Using GNOME schemas: $schema_dir"
     echo "[info] Running installer: $script"
 
     # Temporary environment containing all installer dependencies
@@ -55,17 +58,65 @@ run_noctalia_icon_installer() {
         nixpkgs#git \
         nixpkgs#curl \
         nixpkgs#gnused \
-        nixpkgs#gnugrep \
         nixpkgs#findutils \
         nixpkgs#coreutils \
-        nixpkgs#util-linux \
-        nixpkgs#psmisc \
-        nixpkgs#ncurses \
         -c bash -c '
-            export GSETTINGS_SCHEMA_DIR="$1"
-            set -o pipefail
-            curl -fsSL "$2" | bash
-        ' _ "$schema_dir" \
+            set -euo pipefail
+
+            # Locate compiled GNOME schemas in the Nix store
+            schema_file="$(find "$1" -name gschemas.compiled -print -quit)"
+
+            if [[ -z "$schema_file" ]]; then
+                echo "[error] Could not locate compiled GNOME schemas."
+                exit 1
+            fi
+
+            schema_dir="${schema_file%/*}"
+
+            export GSETTINGS_SCHEMA_DIR="$schema_dir"
+
+            # Limit parallel SVG processing
+            export NIX_ICON_JOBS="${NIX_ICON_JOBS:-2}"
+
+            # Prevent changes to global or system Git configuration
+            export GIT_CONFIG_GLOBAL=/dev/null
+            export GIT_CONFIG_SYSTEM=/dev/null
+            export GIT_TERMINAL_PROMPT=0
+
+            export GIT_AUTHOR_NAME="Noctalia Dynamic Icons"
+            export GIT_AUTHOR_EMAIL="noctalia-icons@localhost"
+            export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+            export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+
+            # Temporary directory for installer execution data
+            tmpdir="$(mktemp -d)"
+            trap '\''rm -rf "$tmpdir"'\'' EXIT
+
+            # Temporary XDG cache and state
+            export XDG_CACHE_HOME="$tmpdir/cache"
+            export XDG_STATE_HOME="$tmpdir/state"
+
+            # Preserve the actual graphical session runtime directory
+            export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+            echo "[info] Using GNOME schemas: $schema_dir"
+            echo "[info] Parallel workers: $NIX_ICON_JOBS"
+            echo "[info] Temporary execution environment ready."
+
+            # Download installer into temporary directory
+            installer="$tmpdir/installer.sh"
+
+            echo "[info] Downloading installer..."
+
+            curl -fsSL "$2" -o "$installer"
+
+            # Execute installer inside temporary Nix environment
+            echo "[info] Executing installer..."
+
+            bash "$installer"
+
+            echo "[info] Installer completed successfully."
+        ' _ "$schema_pkg" \
         "https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/$script"
 }
 ```

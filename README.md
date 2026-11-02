@@ -25,10 +25,12 @@ bash
 Copy and run this helper once:
 
 ```bash
+
 run_noctalia_icon_installer() {
-    local script="$1"
+    local script="${1:-}"
     local schema_pkg
 
+    # Validate installer argument
     if [[ -z "$script" ]]; then
         echo "[error] Specify an installer."
         return 1
@@ -43,6 +45,12 @@ run_noctalia_icon_installer() {
             return 1
             ;;
     esac
+
+    # Validate parallel worker count
+    if [[ ! "${NIX_ICON_JOBS:-2}" =~ ^[1-9][0-9]*$ ]]; then
+        echo "[error] NIX_ICON_JOBS must be a positive integer."
+        return 1
+    fi
 
     # Locate GNOME schemas in the Nix store
     schema_pkg="$(nix eval --raw nixpkgs#gsettings-desktop-schemas.outPath)" ||
@@ -61,7 +69,7 @@ run_noctalia_icon_installer() {
         nixpkgs#findutils \
         nixpkgs#coreutils \
         -c bash -c '
-            set -euo pipefail
+            set -Eeuo pipefail
 
             # Locate compiled GNOME schemas in the Nix store
             schema_file="$(find "$1" -name gschemas.compiled -print -quit)"
@@ -76,7 +84,7 @@ run_noctalia_icon_installer() {
             export GSETTINGS_SCHEMA_DIR="$schema_dir"
 
             # Limit parallel SVG processing
-            export NIX_ICON_JOBS="${NIX_ICON_JOBS:-2}"
+            export NIX_ICON_JOBS="$3"
 
             # Prevent changes to global or system Git configuration
             export GIT_CONFIG_GLOBAL=/dev/null
@@ -90,7 +98,7 @@ run_noctalia_icon_installer() {
 
             # Temporary directory for installer execution data
             tmpdir="$(mktemp -d)"
-            trap '\''rm -rf "$tmpdir"'\'' EXIT
+            trap '\''rm -rf -- "$tmpdir"'\'' EXIT
 
             # Temporary XDG cache and state
             export XDG_CACHE_HOME="$tmpdir/cache"
@@ -117,7 +125,8 @@ run_noctalia_icon_installer() {
 
             echo "[info] Installer completed successfully."
         ' _ "$schema_pkg" \
-        "https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/$script"
+        "https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/$script" \
+        "${NIX_ICON_JOBS:-2}"
 }
 ```
 

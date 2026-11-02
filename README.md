@@ -6,15 +6,135 @@ These installers create separate icon themes and use Noctalia's color palette to
 
 ## Requirements
 
-- NixOS or a system with the Nix package manager and flakes enabled.
 - Noctalia.
-- Git.
+- A working graphical desktop session.
+- Bash.
+- Git and curl (provided temporarily through Nix when using the Nix installation method).
 
-The installers run inside a temporary `nix shell` environment. Dependencies are not added to your system configuration or permanently installed.
+Choose the installation method that matches your system.
+
+## Available Themes
+
+### Papirus
+
+![Papirus Preview](img/papirus.png)
+
+### Colloid
+
+![Colloid Preview](img/colloid.png)
+
+### Flat Remix
+
+![Flat Remix Preview](img/flat.png)
+
+### Tela
+
+![Tela Preview](img/tela.png)
+
+### Reversal
+
+![Reversal Preview](img/reversal.png)
+
+> ***⚠️ Currently under maintenance. Use with caution.***
+
+### Zafiro
+
+![Zafiro Preview](img/zafiro.png)
 
 ## Installation
 
-### 1. Define the installer helper
+There are two installation methods:
+
+- **Standard installation:** For systems without Nix. Requires the necessary dependencies to be installed on your system.
+- **Nix installation:** For NixOS and other systems with Nix and flakes enabled. Dependencies are provided through a temporary `nix shell` environment and are not added to your system configuration.
+
+> ***⚠️ Do not use both methods for the same installation.***
+
+<details>
+<summary><strong>1. Standard installation (Non-Nix)</strong></summary>
+<br>
+This method uses the original installer commands. Dependencies must already be available on your system.
+
+### Dependencies
+
+Install the following dependencies using your distribution's package manager:
+
+| Package / Command | Purpose |
+|---|---|
+| `bash` | Execute installers |
+| `git` | Repository management |
+| `curl` | Download installers |
+| `sed` | SVG recoloring and configuration editing |
+| `grep` | Text searching |
+| `find` | Locate SVG files |
+| `xargs` | Parallel command execution |
+| `coreutils` | Standard utilities |
+| `glib` | `gsettings`, `gio` |
+| `gsettings-desktop-schemas` | GNOME settings schemas |
+| `gtk3` | `gtk-update-icon-cache` |
+| `util-linux` | `flock` |
+| `psmisc` | `fuser` |
+| `ncurses` | `clear` |
+
+Package names may differ between distributions.
+
+### Installation commands
+
+**Papirus**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/papirus.sh | bash
+```
+
+**Colloid**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/colloid.sh | bash
+```
+
+**Flat Remix**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/flat-remix.sh | bash
+```
+
+**Tela**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/tela.sh | bash
+```
+
+**Reversal**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/reversal.sh | bash
+```
+
+**Zafiro**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/zafiro.sh | bash
+```
+
+</details>
+
+<details>
+<summary><strong>2. Nix installation</strong></summary>
+<br>
+For NixOS and other systems with the Nix package manager.
+
+### Requirements
+
+- Nix package manager.
+- Nix flakes and `nix-command` enabled.
+- Noctalia.
+- A working graphical desktop session.
+
+The installers run inside a temporary `nix shell` environment. Dependencies are made available only during execution and are not added to your NixOS configuration or system packages.
+
+Nix may retain downloaded dependencies in the Nix store until garbage collection.
+
+### Step 1. Define the installer helper
 
 Open Bash first if you're using Fish:
 
@@ -25,7 +145,6 @@ bash
 Copy and run this helper once:
 
 ```bash
-
 run_noctalia_icon_installer() {
     local script="${1:-}"
     local schema_pkg
@@ -46,12 +165,6 @@ run_noctalia_icon_installer() {
             ;;
     esac
 
-    # Validate parallel worker count
-    if [[ ! "${NIX_ICON_JOBS:-2}" =~ ^[1-9][0-9]*$ ]]; then
-        echo "[error] NIX_ICON_JOBS must be a positive integer."
-        return 1
-    fi
-
     # Locate GNOME schemas in the Nix store
     schema_pkg="$(nix eval --raw nixpkgs#gsettings-desktop-schemas.outPath)" ||
         return 1
@@ -66,8 +179,12 @@ run_noctalia_icon_installer() {
         nixpkgs#git \
         nixpkgs#curl \
         nixpkgs#gnused \
+        nixpkgs#gnugrep \
         nixpkgs#findutils \
         nixpkgs#coreutils \
+        nixpkgs#util-linux \
+        nixpkgs#psmisc \
+        nixpkgs#ncurses \
         -c bash -c '
             set -Eeuo pipefail
 
@@ -82,9 +199,6 @@ run_noctalia_icon_installer() {
             schema_dir="${schema_file%/*}"
 
             export GSETTINGS_SCHEMA_DIR="$schema_dir"
-
-            # Limit parallel SVG processing
-            export NIX_ICON_JOBS="$3"
 
             # Prevent changes to global or system Git configuration
             export GIT_CONFIG_GLOBAL=/dev/null
@@ -108,7 +222,6 @@ run_noctalia_icon_installer() {
             export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
             echo "[info] Using GNOME schemas: $schema_dir"
-            echo "[info] Parallel workers: $NIX_ICON_JOBS"
             echo "[info] Temporary execution environment ready."
 
             # Download installer into temporary directory
@@ -125,68 +238,55 @@ run_noctalia_icon_installer() {
 
             echo "[info] Installer completed successfully."
         ' _ "$schema_pkg" \
-        "https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/$script" \
-        "${NIX_ICON_JOBS:-2}"
+        "https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/$script"
 }
 ```
 
-### 2. Available themes
+### Step 2. Install a theme
 
-#### Papirus
+Run the corresponding command:
 
-![Papirus Preview](img/papirus.png)
+**Papirus**
 
 ```bash
 run_noctalia_icon_installer papirus.sh
 ```
 
-#### Colloid
-
-![Colloid Preview](img/colloid.png)
+**Colloid**
 
 ```bash
 run_noctalia_icon_installer colloid.sh
 ```
 
-#### Flat Remix
-
-![Flat Remix Preview](img/flat.png)
+**Flat Remix**
 
 ```bash
 run_noctalia_icon_installer flat-remix.sh
 ```
 
-#### Tela
-
-![Tela Preview](img/tela.png)
+**Tela**
 
 ```bash
 run_noctalia_icon_installer tela.sh
 ```
 
-#### Reversal
-
-![Reversal Preview](img/reversal.png)
-
-**Currently under maintenance. Use with caution.**
+**Reversal**
 
 ```bash
 run_noctalia_icon_installer reversal.sh
 ```
 
-#### Zafiro
-
-![Zafiro Preview](img/zafiro.png)
+**Zafiro**
 
 ```bash
 run_noctalia_icon_installer zafiro.sh
 ```
 
-## Dependencies provided by Nix
+### Dependencies provided by Nix
 
 | Package | Purpose |
 |---|---|
-| `glib` | `gsettings` |
+| `glib` | `gsettings`, `gio` |
 | `gsettings-desktop-schemas` | GNOME settings schemas |
 | `gtk3` | `gtk-update-icon-cache` |
 | `git` | Repository management |
@@ -201,10 +301,18 @@ run_noctalia_icon_installer zafiro.sh
 
 All dependencies are provided temporarily by Nix.
 
+</details>
+
 ## Notes
 
-- The helper explicitly sets `GSETTINGS_SCHEMA_DIR` so `gsettings` can locate GNOME schemas.
-- The helper uses Bash to execute the installers.
-- The installers still require a working graphical session for desktop settings changes.
+- The Nix helper explicitly sets `GSETTINGS_SCHEMA_DIR` so `gsettings` can locate GNOME schemas.
+- The Nix helper uses Bash to execute the installers.
+- The standard installation method uses the dependencies already installed on your system.
+- The Nix installation method provides installer dependencies through a temporary Nix shell environment.
+- Temporary execution files, cache and state directories are removed when the Nix installer exits.
+- The actual icon themes, recolored SVG files, Git history, generated icon caches and desktop settings remain persistent.
+- Some installers maintain their own repository caches under `~/.cache`.
+- The installers require a working graphical session for desktop settings changes.
 - Reversal is currently under maintenance.
-- Running the helper does not modify your NixOS configuration.
+- Neither installation method modifies your NixOS configuration.
+- The Nix helper is an execution environment, not a security sandbox. Installers execute with your normal user permissions.

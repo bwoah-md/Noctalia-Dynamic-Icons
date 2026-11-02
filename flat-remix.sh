@@ -79,6 +79,7 @@ info "Creating template for Noctalia..."
 mkdir -p "$TEMPLATES_DIR"
 cat > "$TEMPLATES_DIR/${THEME_NAME}.sh" << 'EOF'
 #!/usr/bin/env bash
+THEME_NAME="Noctalia-Flat"
 PRI="{{colors.primary.default.hex}}"
 C1="${PRI:1}"
 T_DIR="$HOME/.local/share/icons/Noctalia-Flat"

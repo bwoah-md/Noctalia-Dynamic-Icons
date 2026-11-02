@@ -313,6 +313,5 @@ All dependencies are provided temporarily by Nix.
 - The actual icon themes, recolored SVG files, Git history, generated icon caches and desktop settings remain persistent.
 - Some installers maintain their own repository caches under `~/.cache`.
 - The installers require a working graphical session for desktop settings changes.
-- Reversal is currently under maintenance.
 - Neither installation method modifies your NixOS configuration.
 - The Nix helper is an execution environment, not a security sandbox. Installers execute with your normal user permissions.

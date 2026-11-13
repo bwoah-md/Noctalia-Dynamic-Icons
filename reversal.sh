@@ -65,6 +65,7 @@ bash "$TMP_DIR/install.sh" -d "$ICONS_DIR" -n "Noctalia-Reversal"
 rm -rf "$ICONS_DIR/Noctalia-Reversal-dark" "$ICONS_DIR/Noctalia-Reversal-light"
 
 [ -d "$THEME_DIR" ] || error "The installer did not create $THEME_NAME"
+sed -i "s/^Name=.*/Name=$THEME_NAME/" "$THEME_DIR/index.theme"
 
 info "Initializing dynamic engine (Git)..."
 git -C "$THEME_DIR" init -q
@@ -91,13 +92,13 @@ if git -C "$THEME_DIR" show-ref --quiet "refs/heads/$BRANCH"; then
 else
     git -C "$THEME_DIR" checkout -q "original"
     git -C "$THEME_DIR" checkout -q -b "$BRANCH"
-    
+
     # Reversal usa #f5aa1e, #f08705, #ffc841 para sus carpetas naranjas
     find "$THEME_DIR" -name "*.svg" -path "*/places/*" -type f -print0 | xargs -0 -P $(nproc) sed -i \
         -e "s/#f5aa1e/#${COLOR}/gI" \
         -e "s/#f08705/#${COLOR_DARK}/gI" \
         -e "s/#ffc841/#${COLOR2}/gI"
-        
+
     git -C "$THEME_DIR" commit -q -am "color $BRANCH"
 fi
 

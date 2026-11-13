@@ -98,6 +98,12 @@ curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/mai
 curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/flat-remix.sh | bash
 ```
 
+**Fluent**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bwoah-md/noctalia-dynamic-icons/main/fluent.sh | bash
+```
+
 **Tela**
 
 ```bash
@@ -157,7 +163,7 @@ run_noctalia_icon_installer() {
 
     # Allow only known installers
     case "$script" in
-        papirus.sh|colloid.sh|flat-remix.sh|tela.sh|reversal.sh|zafiro.sh)
+        papirus.sh|colloid.sh|flat-remix.sh|fluent.sh|tela.sh|reversal.sh|zafiro.sh)
             ;;
         *)
             echo "[error] Unknown installer: $script"
@@ -262,6 +268,12 @@ run_noctalia_icon_installer colloid.sh
 
 ```bash
 run_noctalia_icon_installer flat-remix.sh
+```
+
+**Fluent**
+
+```bash
+run_noctalia_icon_installer fluent.sh
 ```
 
 **Tela**

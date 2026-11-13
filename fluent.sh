@@ -91,7 +91,7 @@ C1="${PRI:1}"
 THEME_NAME="Noctalia-Fluent"
 THEME_DIR="$HOME/.local/share/icons/$THEME_NAME"
 BASE="$HOME/.local/share/icons/.${THEME_NAME}-base"
-BRANCH="color-${C1}-all-v2"
+BRANCH="color-${C1}-all-v3"
 
 if git -C "$BASE" show-ref --quiet "refs/heads/$BRANCH"; then
     git -C "$BASE" checkout -q "$BRANCH"
@@ -99,10 +99,12 @@ else
     git -C "$BASE" checkout -q "original"
     git -C "$BASE" checkout -q -b "$BRANCH"
 
-    find "$BASE" -type f -name "*.svg" -print0 \
-        | xargs -0 -r -P "$(nproc)" sed -i \
+    find -L "$BASE" -type f -name "*.svg" -print0 \
+        | xargs -0 -r -P "$(nproc)" sed \
+            --follow-symlinks -i \
             -e "s/#198ee6/#${C1}/gI" \
             -e "s/#363636/#${C1}/gI"
+
 
     git -C "$BASE" commit -q -am "color $BRANCH"
 fi

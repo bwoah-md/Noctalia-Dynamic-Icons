@@ -86,7 +86,7 @@ if git -C "$T_DIR" show-ref --quiet "refs/heads/$BRANCH"; then
 else
     git -C "$T_DIR" checkout -q "original"
     git -C "$T_DIR" checkout -q -b "$BRANCH"
-    
+
     # Reemplazo de color maestro multihilo
     find "$T_DIR" -name "*.svg" -type f -print0 | xargs -0 -P $(nproc) sed -i -E \
         -e "s/#60c0f0/#${C1}/gI" \
@@ -95,7 +95,7 @@ else
         -e "s/stop-color:#[0-9a-fA-F]{6}/stop-color:#${C1}/gI" \
         -e "s/style=\"fill:#[0-9a-fA-F]{6}/style=\"fill:#${C1}/gI" \
         -e "s/currentColor/#${C1}/gI"
-        
+
     git -C "$T_DIR" commit -q -am "color $BRANCH"
 fi
 

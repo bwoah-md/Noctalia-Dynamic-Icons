@@ -82,7 +82,7 @@ COLOR="${PRIMARY:1}"
 COLOR2="${SECONDARY:1}"
 THEME_NAME="Noctalia-Reversal"
 THEME_DIR="$HOME/.local/share/icons/$THEME_NAME"
-BRANCH="color-${COLOR}-${COLOR2}-all-v2"
+BRANCH="color-${COLOR}-${COLOR2}-navigation-v1"
 
 CONTAINER="{{colors.primary_container.default.hex}}"
 COLOR_DARK="${CONTAINER:1}"
@@ -93,12 +93,19 @@ else
     git -C "$THEME_DIR" checkout -q "original"
     git -C "$THEME_DIR" checkout -q -b "$BRANCH"
 
-    # Recolor all SVG icons throughout the theme
+    # Recolor the existing three-color folder/theme palette
     find "$THEME_DIR" -type f -name "*.svg" -print0 \
         | xargs -0 -r -P "$(nproc)" sed -i \
             -e "s/#f5aa1e/#${COLOR}/gI" \
             -e "s/#f08705/#${COLOR_DARK}/gI" \
             -e "s/#ffc841/#${COLOR2}/gI"
+
+    # Recolor navigation icons using Noctalia primary
+    find "$THEME_DIR/actions" -type f -name "*.svg" \
+        | grep -E '/(go-home|go-parent-folder|go-next[^/]*|go-previous[^/]*|go-up[^/]*|view-refresh)(-symbolic)?\.svg$' \
+        | while IFS= read -r file; do
+            sed -i "s/#363636/#${COLOR}/gI" "$file"
+        done
 
     git -C "$THEME_DIR" commit -q -am "color $BRANCH"
 fi

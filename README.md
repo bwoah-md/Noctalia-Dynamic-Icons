@@ -27,6 +27,10 @@ Choose the installation method that matches your system.
 
 ![Flat Remix Preview](img/flat.png)
 
+### Fluent 
+
+![Fluent Preview](img/fluent.png)
+
 ### Tela
 
 ![Tela Preview](img/tela.png)

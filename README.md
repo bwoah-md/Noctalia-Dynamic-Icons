@@ -1,6 +1,6 @@
 # Noctalia Dynamic Icons
 
-Dynamic icon themes for GTK file managers, including Nemo, Thunar, Nautilus and Caja.
+Dynamic icon themes for GTK and QT file managers, including Nemo, Dolphin, PCManFM-QT, PCManFM, Thunar, Nautilus, Caja and others.
 
 These installers create separate icon themes and use Noctalia's color palette to recolor SVG icons dynamically.
 
